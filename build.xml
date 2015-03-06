@@ -62,13 +62,15 @@
   </target>
   
   <target name="run" depends="compile" description="runs the class GameStart">
-     <echo>Please use java -cp build edu.ucsb.cs56.projects.games.minesweeper.TextGame for CLI MineSweeper</echo>
-     <echo>Please use ant Mine for GUI MineSweeper</echo>
+     <echo>Please use either ant mine to run MineSweeper with a GUI interface or use ant textmine to run it with a command-line interface</echo>
   </target>
 
- <target name="Mine" depends="compile" description="runs the class MineGUI">
+ <target name="mine" depends="compile" description="runs the class MineGUI for graphical minesweeper">
     <java classname="edu.ucsb.cs56.projects.games.minesweeper.${MainClassGui}" fork="true" classpath="build" />
   </target>
 
+ <target name="textmine" depends="compile" description="runs the class TextGame for command-line minesweeper">
+   <java classname="edu.ucsb.cs56.projects.games.minesweeper.${MainClassText}" fork="true" classpath="build" />
+ </target>
 
 </project>

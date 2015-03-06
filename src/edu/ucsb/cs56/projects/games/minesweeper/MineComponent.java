@@ -2,9 +2,11 @@ package edu.ucsb.cs56.projects.games.minesweeper;
 import java.awt.GridLayout;
 import javax.swing.JComponent;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import java.awt.event.ActionListener;
 import java.awt.event. ActionEvent;
 import java.awt.Font;
+import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JTextArea;
 import java.awt.event.MouseAdapter;
@@ -17,18 +19,21 @@ import javax.swing.plaf.basic.BasicComboPopup;
  * An Swing component for playing MineSweeper
 
    @author Daniel Reta
-   @author @David Acevedo
-   @version CS56 Winter 2014
+   @author David Acevedo
+   @author Caleb Nelson
+   @version 2015/03/04 for lab07, cs56, W15
    @see Grid
  */
 public class MineComponent extends JComponent 
 {
     private Grid game;
     private Messager m;
+    private int size;
     private int status = 0; //allows the StartMenu class to know when the game is done
 	StartMenu start;
-
-    private JButton[][] buttons = new JButton[10][10];
+    private Color zero = new Color (0, 0, 128);
+    private Color number = new Color (0, 100, 0);
+    private JButton[][] buttons;
 
     /** Constructor
 	
@@ -50,24 +55,26 @@ public class MineComponent extends JComponent
 	
 	this.game = game;  // the Interface game
 	this.m = m;  // a place we can write messages to
+	this.size = game.getSize();
+	buttons = new JButton[size][size];
 
 	// note columns ignored when rows are set
 	// number of columns is implicit from the number of things added
 
-	this.setLayout(new GridLayout(10,0)); 
-	for(int i=0; i<10; i++) {
-	    for(int j=0; j<10; j++){
-		String label=String.format("%d",i*10+j);
+	this.setLayout(new GridLayout(this.size ,0)); 
+	for(int i=0; i< this.size; i++) {
+	    for(int j=0; j< this.size; j++){
+		String label=String.format("%d",i* this.size +j);
 		JButton jb = new JButton(label);
 		buttons[i][j] = jb;
-		jb.addMouseListener(new ButtonListener(i*10+j));
+		jb.addMouseListener(new ButtonListener(i* this.size +j));
 		jb.setFont(new Font("sansserif",Font.BOLD,12));
+		jb.setText("");
 		this.add(jb);
 	    }
 	}
 	
-    }    
- 
+    }
 
     /**
      * Inner Class, responds to the event source.
@@ -95,12 +102,20 @@ public class MineComponent extends JComponent
 	    if(game.gameStatus(status) == 0){
 		if(event.getButton() == MouseEvent.BUTTON1){
 		    game.searchBox(num);
-		    for(int i=0; i<10; i++){
-			for(int j=0; j<10; j++){
+		    for(int i=0; i< size; i++){
+			for(int j=0; j< size; j++){
 			    JButton jb = buttons[i][j];
-			    if(game.getCell(i*10+j) != '?'){
+			    if(game.getCell(i*size+j) != '?'){
 				jb.setFont(new Font("sansserif",Font.BOLD,34));
-				jb.setText(Character.toString(game.getCell(i*10+j)));
+				if (game.getCell(i*size+j) == 48)
+				    jb.setForeground(zero);
+				else if (game.getCell(i*size+j) == 70)
+				    jb.setForeground(Color.RED);
+				else if (game.getCell(i*size+j) == 88)
+				    jb.setForeground(Color.BLACK);
+				else
+				    jb.setForeground(number);
+				jb.setText(Character.toString(game.getCell(i*size+j)));
 			    }
 			}
 		    }
@@ -108,10 +123,12 @@ public class MineComponent extends JComponent
 		status = game.gameStatus(status);
 
 		if (status == -1){
+		    JOptionPane.showMessageDialog(MineComponent.this, "You lose! Press esc to start a new game.");
 		    m.append("You lose!!\n");
 			start.setLabel("You lose!!! Press esc to start a New Game");
 		}
 		else if (status == 1){
+		    JOptionPane.showMessageDialog(MineComponent.this, "You win!! Press esc to start a new game.");
 		    m.append("You win!!\n");
 			start.setLabel("You win!!! Press esc to start a New Game");
 		}
@@ -121,21 +138,16 @@ public class MineComponent extends JComponent
 	    else if(event.getButton() == MouseEvent.BUTTON3){
 		if(game.isFlag(num)){
 		    game.deflagBox(num);
-		    JButton jb = buttons[num/10][num%10];
-		    int digit1 = num%10;
-		    int digit2 = num/10;
-		    char c1 = (char)(digit1 + 48);
-		    char c2 = (char)(digit2 + 48);
-		    String s1 = Character.toString(c1);
-		    String s2 = Character.toString(c2);
-		    String s = s1 + s2;
+		    JButton jb = buttons[num/size][num%size];
 		    jb.setFont(new Font("sansserif",Font.BOLD,12));
-		    jb.setText(s); 
+		    jb.setForeground(Color.BLACK);
+		    jb.setText(""); 
 		}	    
 		else if(!(game.isOpen(num))){
 		    game.flagBox(num);
-		    JButton jb = buttons[num/10][num%10];
+		    JButton jb = buttons[num/size][num%size];
 		    jb.setFont(new Font("sansserif",Font.BOLD,30));
+		    jb.setForeground(Color.RED);
 		    jb.setText("F"); 
 		}
 
@@ -153,6 +165,9 @@ public class MineComponent extends JComponent
     }
 	int getStatus(){
 		return status;
+	}
+	Grid getGrid(){
+		return game;
 	}
 }
 

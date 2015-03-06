@@ -7,7 +7,7 @@ import javax.swing.*;
 /** HelpScreen.java is a Panel that displays help messages and a button to return to the StartMenu
 
 @author Julian Gee
-@version CS56, Winter 2014, UCSB
+@version 2015/03/04 for lab07, cs56, W15
 */
 
 public class HelpScreen {

@@ -4,7 +4,7 @@ package edu.ucsb.cs56.projects.games.minesweeper;
    (its an unchecked exception, so it extends  RuntimeException rather than Exception)
 
    @author Daniel Reta
-   @version CS56 Spring 2012, UCSB
+   @version 2015/03/04 for lab07, cs56, W15
    @see GUIGrid
  */
 public class MineException extends RuntimeException {

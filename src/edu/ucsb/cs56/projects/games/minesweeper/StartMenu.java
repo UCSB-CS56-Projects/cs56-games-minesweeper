@@ -9,14 +9,16 @@ import javax.swing.*;
 	and allowing for a new game.
 
      @author David Acevedo
-     @version CS56, Winter 2014, UCSB
+     @version 2015/03/04 for lab07, cs56, W15
 	 @see MineGUI
 */
 
 public class StartMenu {
-	JButton newGame; //Main Menu New Game Button
+	JButton easyGame;
+	JButton medGame;
+	JButton hardGame;
 	JButton help;	//Main Menu Help Button
-	JButton newGamePause;	//Pause Menu New Game Button
+	JButton clearPause;	//Pause Menu New Game Button
 	JButton helpPause;	//Pause Menu Help Button
 	JButton resume;	//Pause Menu Resume Button
 	JFrame frame;	//The frame is where all the good stuff is displayed e.g. Everything
@@ -45,13 +47,38 @@ public class StartMenu {
 	 *  Starts a new Minesweeper game from the main menu
 	 */
 	public void newGame() {
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		game = new JPanel(new BorderLayout());			//our game panel e.g. where everything will be put in for this display
 		escapeListener();								//listens for the esc button
 		status= new JLabel("Press esc to pause game"); //Our good label
 		Grid grid = new Grid(true);
 		Messager m = new SOMessager();			
 		mc = new MineComponent(grid, m, this);	//creates our game interface
-		
+		frame.setSize((65*mc.getGrid().getSize() > screenSize.width
+						? screenSize.width : 65*mc.getGrid().getSize()),
+					  (60*mc.getGrid().getSize() > screenSize.height-40
+						? screenSize.height-40 : 60*mc.getGrid().getSize()));
+
+		game.add(mc);							//puts the game in the jPanel
+		game.add(status,BorderLayout.NORTH);	//puts the game status label at the top of the screen
+		menu.setVisible(false);					//puts the menu away
+		pause.setVisible(false);				//puts the pause menu away
+		frame.getContentPane().add(game);
+	}
+
+	public void newGame(int difficulty) {
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		game = new JPanel(new BorderLayout());			//our game panel e.g. where everything will be put in for this display
+		escapeListener();								//listens for the esc button
+		status= new JLabel("Press esc to pause game"); //Our good label
+		Grid grid = new Grid(true, difficulty);
+		Messager m = new SOMessager();			
+		mc = new MineComponent(grid, m, this);	//creates our game interface
+		frame.setSize((65*mc.getGrid().getSize() > screenSize.width
+						? screenSize.width : 65*mc.getGrid().getSize()),
+					  (60*mc.getGrid().getSize() > screenSize.height-40
+						? screenSize.height-40 : 60*mc.getGrid().getSize()));
+
 		game.add(mc);							//puts the game in the jPanel
 		game.add(status,BorderLayout.NORTH);	//puts the game status label at the top of the screen
 		menu.setVisible(false);					//puts the menu away
@@ -63,6 +90,7 @@ public class StartMenu {
 	 *  Pauses the game and brings up the pause menu
 	 */
 	public void pause() {
+		frame.setSize(650, 600);
 		inUse=true;							//the pause menu is now in use
 		frame.getContentPane().add(pause);	//frame now puts pause in its dear list of importance
 		game.setVisible(false);				//put the game away for a bit
@@ -83,14 +111,14 @@ public class StartMenu {
 	public void createPausePanel(){
 		pause = new JPanel(new GridLayout(3,0));	//our 3 section grid layout for our pause menu
 		resume = new JButton("Resume");				//create Button#1
-		newGamePause = new JButton("New Game");		//create Button#2
+		clearPause = new JButton("Clear Game");		//create Button#2
 		helpPause = new JButton("Help");			//create Button#3
 		addActionListener(resume, "Resume");		//Give Button#1 purpose
-		addActionListener(newGamePause, "New Game");//Give Button#2 purpose
+		addActionListener(clearPause, "Clear Game");//Give Button#2 purpose
 		addActionListener(helpPause, "Help");		//Give Button#3 purpose
 		//adds from order of importance e.g. top==more important than bottom
 		pause.add(resume);							//Add Button#1 to our top section
-		pause.add(newGamePause);					//Add Button#2 to our middle section
+		pause.add(clearPause);					//Add Button#2 to our middle section
 		pause.add(helpPause);						//Add Button#3 to our bottom section
 		frame.getContentPane().add(pause);
 	}
@@ -99,15 +127,23 @@ public class StartMenu {
 	 *  Creates the main menu, the menu when you launch the application
 	 */
 	public void createMainMenu(){
-		menu = new JPanel(new GridLayout(2,0));		//our 2 section grid layout for our main menu
+		frame.setSize(650, 600);
+		menu = new JPanel(new GridLayout(4,0));		//our 2 section grid layout for our main menu
 
-		newGame = new JButton("New Game");			//create Button#1
-		help = new JButton("Help");					//create Button#2
+		easyGame = new JButton("New Easy Game");
+		medGame = new JButton("New Medium Game");
+		hardGame = new JButton("New Hard Game");
+		help = new JButton("Help");
 
-		addActionListener(newGame, "New Game");		//Give Button#1 something to do
-		addActionListener(help, "Help");			//Give Button#2 something to do
-		menu.add(newGame);							//Make Button#1 a game star for the menu panel
-		menu.add(help);								//Make Button#2 a game star for the menu panel
+		addActionListener(easyGame, "New Easy Game");
+		addActionListener(medGame, "New Medium Game");
+		addActionListener(hardGame, "New Hard Game");
+		addActionListener(help, "Help");
+		menu.add(easyGame);
+		menu.add(medGame);
+		menu.add(hardGame);
+		menu.add(help);
+		pause.setVisible(false);
 		frame.getContentPane().add(menu);	
 	}
 	
@@ -148,15 +184,42 @@ public class StartMenu {
 	 * @param action - the action you would like to give the button
 	 */
 	public void addActionListener(JButton button, String action){
-		if(action == "New Game")
+		if(action == "New Easy Game")
 			{
 				button.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						// Execute when button is pressed
-						newGame();
+						newGame(0);
 			}
 		});	
-	}
+		}
+		else if(action == "New Medium Game")
+			{
+				button.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						// Execute when button is pressed
+						newGame(1);
+			}
+		});	
+		}
+		else if(action == "New Hard Game")
+			{
+				button.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						// Execute when button is pressed
+						newGame(2);
+			}
+		});	
+		}
+		else if(action == "Clear Game")
+			{
+				button.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						// Execute when button is pressed
+						createMainMenu();
+			}
+		});	
+		}
 		else if(action == "Help")
 			{
 				button.addActionListener(new ActionListener() {

@@ -9,7 +9,7 @@ Code prior to W14: https://foo.cs.ucsb.edu/cs56/issues/0000900/
 project history
 ===============
 ```
- W14 | andrewberls 4pm | jgee67, davidacevedo | (pconrad) Minesweeper game
+ W14 | calebnelson | andrewberls 4pm | jgee67, davidacevedo | (pconrad) Minesweeper game
 ```
 
 
@@ -37,5 +37,5 @@ MineComponent is a class that sets up the minesweeper Gui, ie. sets up the grid 
 How to Run
 =============================================================================
 
-To run the GuiGame, use "ant Mine".
-To run the TextGame, use "ant compile" and then "java -cp build edu.ucsb.cs56.projects.games.minesweeper.TextGame".
+To run the GuiGame, use "ant mine".
+To run the TextGame, use "ant textmine".

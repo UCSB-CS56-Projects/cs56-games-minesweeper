@@ -8,7 +8,7 @@ import static org.junit.Assert.assertFalse;
 /** Test class for Grid
 
     @author David Acevedo
-    @version 2014/02/28 for project1, cs56, W14
+    @version 2015/03/04 for lab07, cs56, W15
     @see Grid
 
 */
@@ -22,7 +22,9 @@ public class GridTest {
 	 */
 	@Test
 	public void test_Grid(){
-	Grid g1 = new Grid(true);
+	Grid g1 = new Grid(true, 0);	
+	Grid g2 = new Grid(true, 1);	
+	Grid g3 = new Grid(true, 2);
 	assertEquals(true,g1.getIsGUI());
 	}
 	

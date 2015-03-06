@@ -7,7 +7,7 @@ import java.awt.ComponentOrientation;
 
      @author Daniel Reta
 	 @author David Acevedo
-     @version CS56, Winter 2014, UCSB
+     @version 2015/03/04 for lab07, cs56, W15
 */
 
 public class MineGUI {

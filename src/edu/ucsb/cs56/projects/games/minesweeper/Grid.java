@@ -2,26 +2,74 @@ package edu.ucsb.cs56.projects.games.minesweeper;
 
 /** The Grid class is the foundation for minesweeper, applies mine locations, checks if something is open,
 	makes flags functional, etc.
-	@author Unknown
+	@author Caleb Nelson
     @author David Acevedo
-    @version 2014/02/28 for project1, cs56, W14
+    @version 2015/03/04 for lab07, cs56, W15
 
 */
 public class Grid
 {
+    final int EASY_SIZE = 10;
+    final int MED_SIZE = 15;
+    final int HARD_SIZE = 20;
 
     // instance variables
-    private char[][] grid = new char[10][10];
-    private char[][] map = new char[10][10];
+    private int size;
+    private char[][] grid;
+    private char[][] map;
     private boolean isGUI;
     /**
      * Default constructor for objects of class GUIGrid
      */
-    public Grid(boolean isGUI) {
+    public Grid(boolean isGUI){
 	this.isGUI=isGUI;
+	size = EASY_SIZE;
+	grid = new char[size][size];
+	map = new char[size][size];
 	setZero();
-	for(int i = 0; i < 10; i++){
+	for(int i = 0; i < size; i++){
 	    blankToMine();
+	}
+	insertNums();
+	mapMaker(map);
+    }
+    
+    public Grid(boolean isGUI, int difficulty) {
+	this.isGUI=isGUI;
+	switch (difficulty){
+		case 0:
+			size = EASY_SIZE;
+			break;
+		case 1:
+			size = MED_SIZE;
+			break;
+		case 2:
+			size = HARD_SIZE;
+			break;
+		default:
+			throw new IllegalArgumentException("Difficulty needs to be an integer between 0 and 2 inclusive.");
+	}
+	grid = new char[size][size];
+	map = new char[size][size];
+	setZero();
+	switch (difficulty){
+		case 0:
+			for(int i = 0; i < size; i++){
+	    		blankToMine();
+			}
+			break;
+		case 1:
+			for(int i = 0; i < 2*size; i++){
+	    		blankToMine();
+			}
+			break;
+		case 2:
+			for(int i = 0; i < 3*size; i++){
+	    		blankToMine();
+			}
+			break;
+		default:
+			throw new IllegalArgumentException("Difficulty needs to be an integer between 0 and 2 inclusive.");
 	}
 	insertNums();
 	mapMaker(map);
@@ -32,15 +80,22 @@ public class Grid
 	 */
 	public boolean getIsGUI(){
 		return isGUI;
-		}
+	}
+
+	/**
+	 *	Getter for size
+	 */
+	public int getSize(){
+		return size;
+	}
 
     /**
      * Sets all cells in the grid to zero.
      */
 
     public void setZero(){ 
-	for(int i = 0;i < 10;i++){
-	    for(int j = 0; j < 10;j++){
+	for(int i = 0;i < size;i++){
+	    for(int j = 0; j < size;j++){
 		grid[i][j] = '0';
 	    }
 	}
@@ -52,13 +107,13 @@ public class Grid
      */
 
     public void blankToMine(){ 
-	int spotX = (int) (100.0 * Math.random());
-	int a = spotX/10;
-	int b = spotX%10;
+	int spotX = (int) (size*size * Math.random());
+	int a = spotX/size;
+	int b = spotX%size;
 	if(grid[a][b] != 'X'){
 	    grid[a][b] = 'X';
 		if(isGUI == true)
-			System.out.println(a*10+b);}
+			System.out.println(a*size+b);}
 	else
 	    blankToMine(); 
 	return;
@@ -69,12 +124,12 @@ public class Grid
      */
 
     public void insertNums(){ 
-	for(int i = 0;i < 10;i++){
-	    for(int j = 0; j < 10;j++){
-		if(isMine(i*10+j)){
+	for(int i = 0;i < size;i++){
+	    for(int j = 0; j < size;j++){
+		if(isMine(i*size+j)){
 		    for(int k = i-1; k <= i+1; k++){
 			for(int l = j-1; l <= j+1; l++){
-			    if(k >= 0 && k <= 9 && l >= 0 && l <= 9 && !(isMine(k*10+l))){
+			    if(k >= 0 && k <= size-1 && l >= 0 && l <= size-1 && !(isMine(k*size+l))){
 				grid[k][l]++;}
 			}
 		    }
@@ -89,8 +144,8 @@ public class Grid
      */
 
     public void mapMaker(char map[][]){ 
-	for(int i = 0;i < 10;i++){
-	    for(int j = 0; j < 10;j++){
+	for(int i = 0;i < size;i++){
+	    for(int j = 0; j < size;j++){
 		map[i][j] = '?';
 	    }
 	}
@@ -107,14 +162,17 @@ public class Grid
 	
 	String game = "";
 
-	game += "\n";
-	game += "  0 1 2 3 4 5 6 7 8 9 ";
+	game += "\n  ";
+	for(int i = 0;i < size; i++){
+		game += i;
+		game += " ";
+	}
 	game += "\n";
 	game += borders;
 	game += "\n";
-	for(int i = 0;i < 10;i++){
+	for(int i = 0;i < size;i++){
 	    game += i + line;
-	    for(int j = 0; j < 10;j++){
+	    for(int j = 0; j < size;j++){
 		game += map[i][j];
 		game += line;
 	    }
@@ -130,8 +188,8 @@ public class Grid
      */
 
     public boolean isOpen(int i) throws IllegalArgumentException {
-	if( i >= 0 && i <= 99){
-	    if(map[i/10][i%10]  != '?')
+	if( i >= 0 && i <= (size*size)-1){
+	    if(map[i/size][i%size]  != '?')
 		return true;
 	    else
 		return false;
@@ -145,8 +203,8 @@ public class Grid
      */
 
     public boolean isMine(int i) throws IllegalArgumentException {
-	if( i >= 0 && i <= 99){
-	    if(grid[i/10][i%10]  == 'X')
+	if( i >= 0 && i <= (size*size)-1){
+	    if(grid[i/size][i%size]  == 'X')
 		return true;
 	    else
 		return false;
@@ -160,8 +218,8 @@ public class Grid
      */
 
     public boolean isFlag(int i) throws IllegalArgumentException{
-	if( i >= 0 && i <= 99){
-	    if(map[i/10][i%10]  == 'F')
+	if( i >= 0 && i <= (size*size)-1){
+	    if(map[i/size][i%size]  == 'F')
 		return true;
 	    else
 		return false;
@@ -175,22 +233,22 @@ public class Grid
      */
 
     public void searchBox(int box){ 
-	if(box >= 0 && box < 100){
-	    char spot = grid[box/10][box%10];
+	if(box >= 0 && box < (size*size)){
+	    char spot = grid[box/size][box%size];
 	    if(isFlag(box)){
 		System.out.println("You cannot search a flaged box!");
 	    }
 	    else if(isMine(box)){ //opens a box that has a mine
-		map[box/10][box%10] = 'X';
+		map[box/size][box%size] = 'X';
 	    }
 	    else if(isOpen(box)){
 		System.out.println("You cannot search an opened box!");
 	    }
 	    else{
 		if(spot == '0')
-		    findAllZeros(box/10, box%10);
+		    findAllZeros(box/size, box%size);
 		else
-		   map[box/10][box%10] =  spot;
+		   map[box/size][box%size] =  spot;
 	    }	
 	}
 	return;
@@ -210,7 +268,7 @@ public class Grid
 	    return;
 	}
 	else{
-	    map[box/10][box%10] = 'F';
+	    map[box/size][box%size] = 'F';
 	    return;
 	}
     }
@@ -225,7 +283,7 @@ public class Grid
 	    return;
 	}
 	else{
-	    map[box/10][box%10] = '?';
+	    map[box/size][box%size] = '?';
 	}
 	return;
     }
@@ -237,7 +295,7 @@ public class Grid
     public void findAllZeros(int row, int col){
 	for(int i = row-1; i <= row+1; i++){
 	    for(int j = col-1; j <= col+1; j++){
-		if(i >= 0 && i <= 9 && j >= 0 && j <= 9 && !(isMine(i*10+j)) && !(isOpen(i*10+j))){
+		if(i >= 0 && i <= size-1 && j >= 0 && j <= size-1 && !(isMine(i*size+j)) && !(isOpen(i*size+j))){
 		    map[i][j] = grid[i][j];
 		    if(grid[i][j] == '0')
 			findAllZeros(i,j);
@@ -253,19 +311,19 @@ public class Grid
 
     public int gameStatus(int stat){ 
 	if(stat == 0){ // runs only if player hasn't hit a mine
-	    int correctPercent = 0;
-	    for(int i = 0; i < 10;i++){
-		for(int j = 0; j < 10; j++){
-		    if(( isMine(i*10+j) && isFlag(i*10+j))||(grid[i][j] == map[i][j]))
-			correctPercent++; //the map has the correct move for that cell
+	    int correctBoxes = 0;
+	    for(int i = 0; i < size;i++){
+		for(int j = 0; j < size; j++){
+		    if(( isMine(i*size+j) && isFlag(i*size+j))||(grid[i][j] == map[i][j]))
+			correctBoxes++; //the map has the correct move for that cell
 		}
 	    }
-	    if(correctPercent == 100) //all correct moves have been made
+	    if(correctBoxes == size*size) //all correct moves have been made
 		stat++;
 	}
 
-	for(int i = 0; i<10;i++){
-	    for(int j=0; j<10; j++){
+	for(int i = 0; i< size;i++){
+	    for(int j=0; j< size; j++){
 		if(map[i][j] == 'X')
 		    stat--;
 	    }
@@ -280,7 +338,7 @@ public class Grid
      */
 
      public char getCell(int cell){
-	 return map[cell/10][cell%10];   
+	 return map[cell/size][cell%size];   
      }
 
 }
