@@ -4,6 +4,8 @@ cs56-games-minesweeper
 
 Migrated from: https://foo.cs.ucsb.edu/56mantis/view.php?id=0000900 by http://github.com/pconrad
 
+Link to Javadoc: https://jrecinos98.github.io/cs56-games-minesweeper/javadoc/
+
 Code prior to W14: https://foo.cs.ucsb.edu/cs56/issues/0000900/
 
 project history
@@ -40,6 +42,9 @@ First set up your environment variables to connect to your postgrsql database th
 
 * To run the GuiGame, use "ant mine".
 * To run the TextGame, use "ant textmine".
+
+![Alt Text](https://media.giphy.com/media/5z24YknBcpkmlNqyEk/giphy.gif)
+
 
 F17 Final Remarks
 =================
