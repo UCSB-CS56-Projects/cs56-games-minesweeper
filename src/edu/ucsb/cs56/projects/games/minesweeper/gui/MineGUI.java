@@ -1,5 +1,6 @@
 package edu.ucsb.cs56.projects.games.minesweeper.gui;
 
+import java.awt.*;
 import java.io.IOException;
 
 import javax.swing.JFrame;
@@ -11,6 +12,7 @@ import edu.ucsb.cs56.projects.games.minesweeper.frames.GameFrame;
 import edu.ucsb.cs56.projects.games.minesweeper.frames.HelpScreen;
 import edu.ucsb.cs56.projects.games.minesweeper.frames.LeaderboardFrame;
 import edu.ucsb.cs56.projects.games.minesweeper.frames.MainMenu;
+import edu.ucsb.cs56.projects.games.minesweeper.gamelogic.Grid;
 
 /**
  * MineGUI.java is a base that calls all GUI objects and handles tasks
@@ -35,10 +37,10 @@ public class MineGUI {
 	 * @param args args passed into program call
 	 */
 	public static void main (String[] args) {
-		DBConnector.init();
-		mainMenu = new MainMenu();
-		helpScreen = new HelpScreen();
-		leaderboardFrame = new LeaderboardFrame();
+	    DBConnector.init();
+	    mainMenu = new MainMenu();
+        helpScreen= new HelpScreen();
+        leaderboardFrame = new LeaderboardFrame();
 	}
 
 	/**
@@ -57,6 +59,7 @@ public class MineGUI {
 			JOptionPane.showMessageDialog(null, "There is no previous game to load", "No previous game", JOptionPane.DEFAULT_OPTION);
 		}
 	}
+
 
 	/**
 	 * return to main menu from either the help screen or game frame
@@ -110,6 +113,9 @@ public class MineGUI {
 	 */
 	public static boolean overwriteSavePrompt() {
 		JFrame currFrame = getCurrentFrame();
+		if(!Grid.saveExist()){
+		    return true;
+        }
 		int response = JOptionPane.showConfirmDialog(currFrame, "Are you sure you want to do this? This will delete previous save data", "Overwriting Save", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (response == JOptionPane.YES_OPTION) {
 			return true;
@@ -133,4 +139,20 @@ public class MineGUI {
 			return mainMenu;
 		}
 	}
+
+    /**
+     * Centers a Window object on screen.
+     * @param frame An object of type Window or any of its sub classes.
+     */
+
+    public static void centerWindow(Window frame) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
+        int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+        frame.setLocation(x, y);
+    }
+
+
+
+
 }
